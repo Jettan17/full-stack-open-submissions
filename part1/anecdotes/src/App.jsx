@@ -14,9 +14,21 @@ const App = () => {
 
   const [selected, setSelected] = useState(0)
 
+  const [votes, setVotes] = useState(Array(anecdotes.length).fill(0))
+
+  const handleVoteUpdate = () => {
+    const votesCopy = [...votes]
+    votesCopy[selected] = votesCopy[selected] + 1
+    setVotes(votesCopy)
+  }
+
+  console.log("rerendering")
+
   return (
     <div>
       <p>{anecdotes[selected]}</p>
+      <p>has {votes[selected]} votes</p>
+      <button onClick={handleVoteUpdate} >vote</button>
       <button onClick={() => setSelected(Math.floor(Math.random() * anecdotes.length))}>next anecdote</button>
     </div>
   )
