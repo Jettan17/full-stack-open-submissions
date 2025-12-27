@@ -25,6 +25,10 @@ const PersonForm = ({persons, setPersons, setMessageStatus}) => {
               setMessageStatus({ success: true, text: `${person.name}'s phone number changed from ${person.number} to ${newNumber}` })
               setPersons(persons.map(person => person.id === updatedPerson.id ? updatedPerson : person))
             })
+            .catch(() => {
+              setPersons(persons.filter(chkPerson => chkPerson.id !== person.id))
+              setMessageStatus({success: false, text: `${person.name} is already deleted from the server`})
+            })
         }
         return
       } else if (person.name === newName && person.number === newNumber) {
