@@ -16,12 +16,23 @@ const PersonForm = ({persons, setPersons}) => {
   const handleSubmit = (e) => {
     e.preventDefault()
     for (const person of persons) {
-      if (person.name === newName) {
-        alert(`${newName} is already added to phonebook`)
+      if (person.name === newName && person.number !== newNumber) {
+        //Update phone number
+        if (window.confirm(`${person.name} is already added to the phonebook, replace the old number (${person.number}) with a new number (${newNumber})?`)) {
+          personService
+            .update(person.id, {...person, number: newNumber})
+            .then(updatedPerson => {
+              setPersons(persons.map(person => person.id === updatedPerson.id ? updatedPerson : person))
+            })
+        }
         return
-      }
-      if (person.number === newNumber) {
-        alert(`${newNumber} is already added to phonebook`)
+      } else if (person.name === newName && person.number === newNumber) {
+        //Exact same entry
+        alert(`${newName} with phone number ${newNumber} is already added to phonebook`)
+        return
+      } else if (person.name !== newName && person.number === newNumber) {
+        //Same phone number conflict
+        alert(`${newNumber} is already added to phonebook, it belongs to ${person.name}`)
         return
       }
     }
@@ -61,8 +72,8 @@ const DeleteButton = ({persons, setPersons, name}) => {
 
     personService
       .deletePerson(deleteId)
-      .then(() => {
-        setPersons([...persons].filter(person => person.id !== deleteId))
+      .then(deletedPerson => {
+        setPersons([...persons].filter(person => person.id !== deletedPerson.id))
       })
       .catch(() => {
         alert(`${name} is already deleted from the server`)
