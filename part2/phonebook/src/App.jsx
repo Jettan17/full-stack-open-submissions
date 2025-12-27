@@ -1,4 +1,4 @@
-import { useState, useEffect } from 'react'
+import React, { useState, useEffect } from 'react'
 import personService from './services/persons'
 
 const Filter = ({newSearch, setNewSearch}) => {
@@ -50,11 +50,39 @@ const PersonForm = ({persons, setPersons}) => {
   )
 }
 
-const Persons = ({persons, newSearch}) => {
+const DeleteButton = ({persons, setPersons, name}) => {
+  const handleClick = () => {
+    if (!window.confirm(`Delete ${name}?`)) {
+      //Not confirm delete, back out
+      return
+    }
+
+    const deleteId = persons.find(person => person.name === name).id
+
+    personService
+      .deletePerson(deleteId)
+      .then(() => {
+        setPersons([...persons].filter(person => person.id !== deleteId))
+      })
+      .catch(() => {
+        alert(`${name} is already deleted from the server`)
+        setPersons(persons.filter(person => person.id !== deleteId))
+      })
+  }
+
+  return (
+    <button onClick={handleClick}>delete</button>
+  )
+}
+
+const Persons = ({persons, setPersons, newSearch}) => {
   return (
     <>
       {persons.filter(person => person.name.toLowerCase().includes(newSearch)).map((person) => (
-        <p key={person.name}>{person.name} {person.number}</p>
+        <React.Fragment key={person.name}>
+        <p>{person.name} {person.number}</p>
+        <DeleteButton persons={persons} setPersons={setPersons} name={person.name} />
+        </React.Fragment>
       ))}
     </>
   )
@@ -77,7 +105,7 @@ const App = () => {
       <h2>add a new</h2>
       <PersonForm persons={persons} setPersons={setPersons} />
       <h2>Numbers</h2>
-      <Persons persons={persons} newSearch={newSearch} />
+      <Persons persons={persons} setPersons={setPersons} newSearch={newSearch} />
     </div>
   )
 }
