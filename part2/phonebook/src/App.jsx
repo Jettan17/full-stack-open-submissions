@@ -9,7 +9,7 @@ const Filter = ({newSearch, setNewSearch}) => {
   )
 }
 
-const PersonForm = ({persons, setPersons}) => {
+const PersonForm = ({persons, setPersons, setMessageStatus}) => {
   const [newName, setNewName] = useState('')
   const [newNumber, setNewNumber] = useState('')
 
@@ -22,17 +22,18 @@ const PersonForm = ({persons, setPersons}) => {
           personService
             .update(person.id, {...person, number: newNumber})
             .then(updatedPerson => {
+              setMessageStatus({ success: true, text: `${person.name}'s phone number changed from ${person.number} to ${newNumber}` })
               setPersons(persons.map(person => person.id === updatedPerson.id ? updatedPerson : person))
             })
         }
         return
       } else if (person.name === newName && person.number === newNumber) {
         //Exact same entry
-        alert(`${newName} with phone number ${newNumber} is already added to phonebook`)
+        setMessageStatus({success: false, text: `${newName} with phone number ${newNumber} is already added to phonebook`})
         return
       } else if (person.name !== newName && person.number === newNumber) {
         //Same phone number conflict
-        alert(`${newNumber} is already added to phonebook, it belongs to ${person.name}`)
+        setMessageStatus({ success: false, text: `${newNumber} is already added to phonebook, it belongs to ${person.name}` })
         return
       }
     }
@@ -43,6 +44,7 @@ const PersonForm = ({persons, setPersons}) => {
         setPersons(persons.concat(newPerson))
         setNewName('')
         setNewNumber('')
+        setMessageStatus({success: true, text: `${newName} added`})
       })
   }
 
@@ -61,7 +63,7 @@ const PersonForm = ({persons, setPersons}) => {
   )
 }
 
-const DeleteButton = ({persons, setPersons, name}) => {
+const DeleteButton = ({persons, setPersons, name, setMessageStatus}) => {
   const handleClick = () => {
     if (!window.confirm(`Delete ${name}?`)) {
       //Not confirm delete, back out
@@ -74,10 +76,11 @@ const DeleteButton = ({persons, setPersons, name}) => {
       .deletePerson(deleteId)
       .then(deletedPerson => {
         setPersons([...persons].filter(person => person.id !== deletedPerson.id))
+        setMessageStatus({success: true, text: `Deleted ${deletedPerson.name}`})
       })
       .catch(() => {
-        alert(`${name} is already deleted from the server`)
         setPersons(persons.filter(person => person.id !== deleteId))
+        setMessageStatus({success: false, text: `${name} is already deleted from the server`})
       })
   }
 
@@ -99,9 +102,33 @@ const Persons = ({persons, setPersons, newSearch}) => {
   )
 }
 
+const Message = ({messageStatus}) => {
+  let messageStyle = {
+    color: 'green',
+    border: '2px solid green',
+    borderRadius: '20px',
+    padding: '10px'
+  }
+
+  if (!messageStatus.success) {
+    messageStyle = {
+      ...messageStyle,
+      color: 'red',
+      border: '2px solid red',
+    }
+  }
+
+  if (messageStatus.text) {
+    return (
+      <h3 style={messageStyle}>{messageStatus.text}</h3>
+    )
+  }
+}
+
 const App = () => {
   const [persons, setPersons] = useState([])
   const [newSearch, setNewSearch] = useState('')
+  const [messageStatus, setMessageStatus] = useState({success: true, text: ''})
 
   useEffect(() => {
     personService
@@ -112,11 +139,12 @@ const App = () => {
   return (
     <div>
       <h2>Phonebook</h2>
+      <Message messageStatus={messageStatus} />
       <Filter newSearch={newSearch} setNewSearch={setNewSearch} />
       <h2>add a new</h2>
-      <PersonForm persons={persons} setPersons={setPersons} />
+      <PersonForm persons={persons} setPersons={setPersons} setMessageStatus={setMessageStatus} />
       <h2>Numbers</h2>
-      <Persons persons={persons} setPersons={setPersons} newSearch={newSearch} />
+      <Persons persons={persons} setPersons={setPersons} newSearch={newSearch} setMessageStatus={setMessageStatus} />
     </div>
   )
 }
