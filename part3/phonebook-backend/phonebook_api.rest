@@ -1,7 +1,7 @@
-POST https://full-stack-open-submissions-r5vs.onrender.com/api/persons
+POST http://localhost:3001/api/persons
 Content-Type: application/json
 
 { 
-    "name": "jet41", 
+    "name": "making sure everything still works", 
     "number": "69-67-85018"
 }
