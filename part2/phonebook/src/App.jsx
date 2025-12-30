@@ -80,7 +80,7 @@ const DeleteButton = ({persons, setPersons, name, setMessageStatus}) => {
       .deletePerson(deleteId)
       .then(deletedPerson => {
         setPersons([...persons].filter(person => person.id !== deletedPerson.id))
-        setMessageStatus({success: true, text: `Deleted ${deletedPerson.name}`})
+        setMessageStatus({success: true, text: `Deleted ${name}`})
       })
       .catch(() => {
         setPersons(persons.filter(person => person.id !== deleteId))
@@ -93,13 +93,13 @@ const DeleteButton = ({persons, setPersons, name, setMessageStatus}) => {
   )
 }
 
-const Persons = ({persons, setPersons, newSearch}) => {
+const Persons = ({persons, setPersons, newSearch, setMessageStatus}) => {
   return (
     <>
       {persons.filter(person => person.name.toLowerCase().includes(newSearch)).map((person) => (
         <React.Fragment key={person.name}>
         <p>{person.name} {person.number}</p>
-        <DeleteButton persons={persons} setPersons={setPersons} name={person.name} />
+        <DeleteButton persons={persons} setPersons={setPersons} name={person.name} setMessageStatus={setMessageStatus} />
         </React.Fragment>
       ))}
     </>
