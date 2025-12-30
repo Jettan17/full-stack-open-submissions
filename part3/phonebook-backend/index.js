@@ -48,7 +48,7 @@ app.get('/info', (request, response) => {
 
 app.delete('/api/persons/:id', (request, response) => {
     const id = request.params.id
-    persons = persons.filter(person => person.id !== id)
+    // persons = persons.filter(person => person.id !== id)
 
     response.status(204).end()
 })
@@ -60,24 +60,25 @@ app.post('/api/persons', (request, response) => {
         return response.status(400).json({
             error: 'name or number missing'
         })
-    } else if (persons.find(person => person.name === body.name)) {
-        return response.status(400).json({
-            error: 'name must be unique'
-        })
-    }
+    } //else if (persons.find(person => person.name === body.name)) {
+    //     return response.status(400).json({
+    //         error: 'name must be unique'
+    //     })
+    // }
     
     const person = new Person({
         name: body.name,
-        number: body.number,
-        id: String(Math.floor(Math.random()*1000))
+        number: body.number
     })
     
     person.save().then(result => {
-		response.json(person)
-	})
+        response.json(result)
+    }).catch(error => {
+        response.status(400).json({ error: error.message })
+    })
 })
 
-const PORT = process.env.PORT
+const PORT = process.env.PORT || 3001
 app.listen(PORT, () => {
     console.log(`Server running on port ${PORT}`)
 })
