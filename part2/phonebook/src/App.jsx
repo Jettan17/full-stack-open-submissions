@@ -78,8 +78,8 @@ const DeleteButton = ({persons, setPersons, name, setMessageStatus}) => {
 
     personService
       .deletePerson(deleteId)
-      .then(deletedPerson => {
-        setPersons([...persons].filter(person => person.id !== deletedPerson.id))
+      .then(() => {
+        setPersons([...persons].filter(person => person.id !== deleteId))
         setMessageStatus({success: true, text: `Deleted ${name}`})
       })
       .catch(() => {
