@@ -50,6 +50,9 @@ const PersonForm = ({persons, setPersons, setMessageStatus}) => {
         setNewNumber('')
         setMessageStatus({success: true, text: `${newName} added`})
       })
+      .catch (error => {
+        setMessageStatus({ success: false, text: `${error.response.data.error}` })
+      })
   }
 
   return (
