@@ -36,12 +36,13 @@ app.get('/api/persons/:id', (request, response) => {
 })
 
 app.get('/info', (request, response) => {
-    const count = persons.length
-    const time = new Date()
-    response.send(`
+    Person.countDocuments({}).then(count => {
+        console.log(count)
+        response.send(`
         <p>Phonebook has info for ${count} people</p>
-        <p>${time}</p>
-    `)
+        <p>${new Date()}</p>
+        `)
+    })
 })
 
 app.delete('/api/persons/:id', (request, response) => {
