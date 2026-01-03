@@ -6,8 +6,6 @@ if (process.argv.length < 3) {
 }
 
 const password = process.argv[2]
-const newName = process.argv[3]
-const newNumber = process.argv[4]
 
 const url = `mongodb+srv://jettan17:${password}@cluster0.hnvbl6u.mongodb.net/testBlogApp?appName=Cluster0`
 
@@ -15,29 +13,35 @@ mongoose.set('strictQuery',false)
 
 mongoose.connect(url, { family: 4 })
 
-const personSchema = new mongoose.Schema({
-  name: String,
-  number: String,
+const blogSchema = mongoose.Schema({
+  title: String,
+  author: String,
+  url: String,
+  likes: Number,
 })
 
-const Person = mongoose.model('Person', personSchema)
+const Blog = mongoose.model('Blog', blogSchema)
 
-if (!newName || !newNumber) { //GET ALL
-  Person.find({}).then(result => {
-    console.log('phonebook:')
-    result.forEach(person => {
-      console.log(person)
-    })
-    mongoose.connection.close()
-  })
-} else { //POST
-  const person = new Person({
-    name: newName,
-    number: newNumber,
-  })
+const newBlog = new Blog({
+	title: "test2",
+	author: "tesg",
+	url: "qewq.com",
+	likes: 114,
+})
 
-  person.save().then(result => {
-    console.log(`Added ${newName} number ${newNumber} to phonebook`)
-    mongoose.connection.close()
-  })
-}
+newBlog.save().then(result => {
+	console.log(`Added ${newBlog}`)
+	mongoose.connection.close()
+})
+
+// if (!newName || !newNumber) { //GET ALL
+//   Blog.find({}).then(result => {
+//     console.log('phonebook:')
+//     result.forEach(Blog => {
+//       console.log(Blog)
+//     })
+//     mongoose.connection.close()
+//   })
+// } else { //POST
+  
+// }
