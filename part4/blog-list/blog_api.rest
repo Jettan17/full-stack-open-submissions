@@ -1,9 +1,9 @@
-POST http://localhost:3003/api/blogs
-Content-Type: application/json
+DELETE http://localhost:3003/api/blogs/6958b14839769668ac8cb032
+# Content-Type: application/json
 
-{ 
-    "title": "dodge",
-    "author": "doge",
-    "url": "https://woofwoof.com",
-    "likes": 15
-}
+# { 
+#     "title": "dodge",
+#     "author": "doge",
+#     "url": "https://woofwoof.com",
+#     "likes": 15
+# }
