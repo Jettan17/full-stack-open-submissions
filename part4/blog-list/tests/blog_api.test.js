@@ -67,6 +67,20 @@ describe('POST tests', () => {
     })
 })
 
+describe('DELETE tests', () => {
+    test('a valid blog can be deleted', async () => {
+        const blogs = await api.get('/api/blogs')
+        const deleteId = blogs.body[0].id
+
+        await api
+            .delete(`/api/blogs/${deleteId}`)
+            .expect(204)
+        
+        const blogsAtEnd = await helper.blogsInDb()
+        assert.strictEqual(blogsAtEnd.length, helper.initialBlogs.length - 1)
+    })
+})
+
 after(async () => {
     await mongoose.connection.close()
 })
