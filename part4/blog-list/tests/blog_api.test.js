@@ -1,37 +1,70 @@
-const { test, after } = require('node:test')
+const assert = require('node:assert')
+const { test, after, beforeEach, describe } = require('node:test')
 const mongoose = require('mongoose')
 const supertest = require('supertest')
 const app = require('../app')
-const assert = require('node:assert')
+const helper = require('./test_helper')
+const Blog = require('../models/blog')
 
 const api = supertest(app)
 
-test('blogs are returned as json', async () => {
-    await api
-        .get('/api/blogs')
-        .expect(200)
-        .expect('Content-Type', /application\/json/)
+beforeEach(async () => {
+    await Blog.deleteMany({})
+    await Blog.insertMany(helper.initialBlogs)
 })
 
-test('all blogs are returned', async () => {
-    const response = await api.get('/api/blogs')
+describe('GET tests', () => {
+    test('blogs are returned as json', async () => {
+        await api
+            .get('/api/blogs')
+            .expect(200)
+            .expect('Content-Type', /application\/json/)
+    })
 
-    assert.strictEqual(response.body.length, 2)
+
+    test('all blogs are returned', async () => {
+        const response = await api.get('/api/blogs')
+
+        assert.strictEqual(response.body.length, helper.initialBlogs.length)
+    })
+
+    test('a specific blog is within the returned blogs', async () => {
+        const response = await api.get('/api/blogs')
+
+        const title = response.body.map(e => e.title)
+        assert.strictEqual(title.includes('test2'), true)
+    })
+
+    test('unique identifier is named id', async () => {
+        const response = await api.get('/api/blogs')
+
+        const idPresent = 'id' in response.body[0]
+
+        assert.ok(idPresent)
+    })
 })
 
-test('a specific blog is within the returned blogs', async () => {
-    const response = await api.get('/api/blogs')
+describe('POST tests', () => {
+    test('a valid blog can be added ', async () => {
+        const newBlog = {
+            title: 'async/await simplifies making async calls',
+            author: 'easy2',
+            url: 'Browser JavaScript',
+            likes: 411,
+        }
 
-    const title = response.body.map(e => e.title)
-    assert.strictEqual(title.includes('test2'), true)
-})
+        await api
+            .post('/api/blogs')
+            .send(newBlog)
+            .expect(201)
+            .expect('Content-Type', /application\/json/)
 
-test('unique identifier is named id', async () => {
-    const response = await api.get('/api/blogs')
+        const blogsAtEnd = await helper.blogsInDb()
+        assert.strictEqual(blogsAtEnd.length, helper.initialBlogs.length + 1)
 
-    const idPresent = 'id' in response.body[0]
-
-    assert.ok(idPresent)
+        const contents = blogsAtEnd.map(n => n.title)
+        assert(contents.includes('async/await simplifies making async calls'))
+    })
 })
 
 after(async () => {
