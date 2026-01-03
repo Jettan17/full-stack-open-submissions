@@ -69,8 +69,8 @@ describe('POST tests', () => {
 
 describe('DELETE tests', () => {
     test('a valid blog can be deleted', async () => {
-        const blogs = await api.get('/api/blogs')
-        const deleteId = blogs.body[0].id
+        const blogs = await helper.blogsInDb()
+        const deleteId = blogs[0].id
 
         await api
             .delete(`/api/blogs/${deleteId}`)
@@ -78,6 +78,27 @@ describe('DELETE tests', () => {
         
         const blogsAtEnd = await helper.blogsInDb()
         assert.strictEqual(blogsAtEnd.length, helper.initialBlogs.length - 1)
+    })
+})
+
+describe('PUT tests', () => {
+    test('a valid blog can be updated', async () => {
+        const blogs = await helper.blogsInDb()
+        const putBlog = blogs[0]
+        const putId = putBlog.id
+
+        const newBlog = {
+            ...putBlog,
+            likes: 1,
+        }
+
+        await api
+            .put(`/api/blogs/${putId}`)
+            .send(newBlog)
+
+        const blogsAtEnd = await helper.blogsInDb()
+        assert.strictEqual(blogsAtEnd.length, helper.initialBlogs.length)
+        assert.strictEqual(blogsAtEnd[0].likes, 1)
     })
 })
 
