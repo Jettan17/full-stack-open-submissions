@@ -26,6 +26,14 @@ test('a specific blog is within the returned blogs', async () => {
     assert.strictEqual(title.includes('test2'), true)
 })
 
+test('unique identifier is named id', async () => {
+    const response = await api.get('/api/blogs')
+
+    const idPresent = 'id' in response.body[0]
+
+    assert.ok(idPresent)
+})
+
 after(async () => {
     await mongoose.connection.close()
 })
