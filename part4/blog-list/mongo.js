@@ -23,15 +23,15 @@ const blogSchema = mongoose.Schema({
 const Blog = mongoose.model('Blog', blogSchema)
 
 const newBlog = new Blog({
-	title: "test2",
-	author: "tesg",
-	url: "qewq.com",
-	likes: 114,
+  title: 'test2',
+  author: 'tesg',
+  url: 'qewq.com',
+  likes: 114,
 })
 
 newBlog.save().then(result => {
-	console.log(`Added ${newBlog}`)
-	mongoose.connection.close()
+  console.log(`Added ${newBlog}`)
+  mongoose.connection.close()
 })
 
 // if (!newName || !newNumber) { //GET ALL
@@ -43,5 +43,5 @@ newBlog.save().then(result => {
 //     mongoose.connection.close()
 //   })
 // } else { //POST
-  
+
 // }

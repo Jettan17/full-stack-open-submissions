@@ -7,3 +7,12 @@ DELETE http://localhost:3003/api/blogs/6958b14839769668ac8cb032
 #     "url": "https://woofwoof.com",
 #     "likes": 15
 # }
+###
+POST http://localhost:3003/api/users/
+Content-Type: application/json
+
+{
+    "username": "mluukkai",
+    "name": "Matti Luukkainen",
+    "password": "salainen"
+}
