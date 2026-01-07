@@ -3,14 +3,42 @@ import Blog from './components/Blog'
 import blogService from './services/blogs'
 import loginService from './services/login'
 
+const StatusMessage = ({ message }) => {
+  const [visible, setVisible] = useState(false)
+
+  useEffect(() => {
+    if (message) {
+      setVisible(true)
+      const timer = setTimeout(() => {
+        setVisible(false)
+      }, 5000)
+      return () => clearTimeout(timer)
+    }
+  }, [message])
+
+  const messageStyle = {
+    border: message.success ? '3px solid green': '3px solid red',
+    borderRadius: '10px',
+    padding: '10px',
+    margin: '10px 0',
+    color: message.success ? 'green' : 'red',
+    visibility: visible ? 'visible' : 'hidden'
+  }
+
+  return (
+    <div style={messageStyle}>
+      {message.text}
+    </div>
+  )
+}
+
 const App = () => {
   const [blogs, setBlogs] = useState([])
   const [username, setUsername] = useState('')
   const [password, setPassword] = useState('') 
   const [user, setUser] = useState(null)
-  const [newTitle, setNewTitle] = useState('')
-  const [newAuthor, setNewAuthor] = useState('') 
-  const [newUrl, setNewUrl] = useState('') 
+  const [newBlog, setNewBlog] = useState({title: '', author: '', url: ''})
+  const [message, setMessage] = useState({success: true, text: 'Load successful'})
 
   useEffect(() => {
     const fetchBlogs = async () => {
@@ -44,11 +72,9 @@ const App = () => {
       setUser(user)
       setUsername('')
       setPassword('')
+      setMessage({success: true, text: 'Login successful'})
     } catch {
-      console.error('wrong credentials')
-      setTimeout(() => {
-        console.error(null)
-      }, 5000)
+      setMessage({ success: false, text: 'Wrong username or password' })
     }
   }
 
@@ -93,13 +119,13 @@ const App = () => {
   const handleCreateBlog = async event => {
     event.preventDefault()
 
-    const newBlog = await blogService.create({ 
-      title: newTitle, 
-      author: newAuthor, 
-      url: newUrl 
+    const addedBlog = await blogService.create({ 
+      ...newBlog
     })
 
-    setBlogs([...blogs, newBlog])
+    setBlogs([...blogs, addedBlog])
+    setNewBlog({title: '', author: '', url: ''})
+    setMessage({ success: true, text: `${addedBlog.title} added successfully` })
   }
 
   const blogsDisplay = () => {
@@ -115,8 +141,8 @@ const App = () => {
           title:
           <input
             type="text"
-            value={newTitle}
-            onChange={({ target }) => setNewTitle(target.value)} 
+            value={newBlog.title}
+            onChange={({ target }) => setNewBlog({...newBlog, title: target.value})} 
           />
         </label>
       </div>
@@ -125,8 +151,8 @@ const App = () => {
           author:
           <input
             type="text"
-            value={newAuthor}
-            onChange={({ target }) => setNewAuthor(target.value)}
+            value={newBlog.author}
+            onChange={({ target }) => setNewBlog({...newBlog, author: target.value})}
           />
         </label>
       </div>
@@ -135,8 +161,8 @@ const App = () => {
           url:
           <input
             type="url"
-            value={newUrl}
-            onChange={({ target }) => setNewUrl(target.value)}
+            value={newBlog.url}
+            onChange={({ target }) => setNewBlog({...newBlog, url: target.value})}
           />
         </label>
       </div>
@@ -153,6 +179,7 @@ const App = () => {
 
   return (
     <div>
+      <StatusMessage message={message} />
       {!user && loginForm()}
       {user && blogsDisplay()}
     </div>
