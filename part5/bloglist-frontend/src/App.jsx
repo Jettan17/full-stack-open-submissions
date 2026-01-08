@@ -32,12 +32,66 @@ const StatusMessage = ({ message }) => {
   )
 }
 
+const NewBlogForm = ({ blogs, setBlogs, setMessage, setCreateVisible }) => {
+  const [newBlog, setNewBlog] = useState({ title: '', author: '', url: '' })
+
+  const handleCreateBlog = async event => {
+    event.preventDefault()
+
+    const addedBlog = await blogService.create({
+      ...newBlog
+    })
+
+    setBlogs([...blogs, addedBlog])
+    setNewBlog({ title: '', author: '', url: '' })
+    setMessage({ success: true, text: `${addedBlog.title} added successfully` })
+    setCreateVisible(false)
+  }
+
+  return (
+    <form onSubmit={handleCreateBlog}>
+      <h2>create new</h2>
+      <div>
+        <label>
+          title:
+          <input
+            type="text"
+            value={newBlog.title}
+            onChange={({ target }) => setNewBlog({ ...newBlog, title: target.value })}
+          />
+        </label>
+      </div>
+      <div>
+        <label>
+          author:
+          <input
+            type="text"
+            value={newBlog.author}
+            onChange={({ target }) => setNewBlog({ ...newBlog, author: target.value })}
+          />
+        </label>
+      </div>
+      <div>
+        <label>
+          url:
+          <input
+            type="url"
+            value={newBlog.url}
+            onChange={({ target }) => setNewBlog({ ...newBlog, url: target.value })}
+          />
+        </label>
+      </div>
+      <button type="submit">create</button>
+      <button onClick={() => setCreateVisible(false)}>cancel</button>
+    </form>
+  )
+}
+
 const App = () => {
   const [blogs, setBlogs] = useState([])
   const [username, setUsername] = useState('')
   const [password, setPassword] = useState('') 
   const [user, setUser] = useState(null)
-  const [newBlog, setNewBlog] = useState({title: '', author: '', url: ''})
   const [message, setMessage] = useState({success: true, text: 'Load successful'})
   const [createVisible, setCreateVisible] = useState(false)
 
@@ -117,59 +171,6 @@ const App = () => {
     )
   }
 
-  const handleCreateBlog = async event => {
-    event.preventDefault()
-
-    const addedBlog = await blogService.create({ 
-      ...newBlog
-    })
-
-    setBlogs([...blogs, addedBlog])
-    setNewBlog({title: '', author: '', url: ''})
-    setMessage({ success: true, text: `${addedBlog.title} added successfully` })
-    setCreateVisible(false)
-  }
-
-  const createNewBlogForm = () => {
-    return (
-      <form onSubmit={handleCreateBlog}>
-        <h2>create new</h2>
-        <div>
-          <label>
-            title:
-            <input
-              type="text"
-              value={newBlog.title}
-              onChange={({ target }) => setNewBlog({ ...newBlog, title: target.value })}
-            />
-          </label>
-        </div>
-        <div>
-          <label>
-            author:
-            <input
-              type="text"
-              value={newBlog.author}
-              onChange={({ target }) => setNewBlog({ ...newBlog, author: target.value })}
-            />
-          </label>
-        </div>
-        <div>
-          <label>
-            url:
-            <input
-              type="url"
-              value={newBlog.url}
-              onChange={({ target }) => setNewBlog({ ...newBlog, url: target.value })}
-            />
-          </label>
-        </div>
-        <button type="submit">create</button>
-        <button onClick={() => setCreateVisible(false)}>cancel</button>
-      </form>
-    )
-  }
-
   const blogsDisplay = () => {
     return (
     <>
@@ -179,7 +180,7 @@ const App = () => {
     {!createVisible && (
   <button onClick={() => setCreateVisible(true)}>create new blog</button>
 )}
-{createVisible && createNewBlogForm()}
+{createVisible && <NewBlogForm blogs={blogs} setBlogs={setBlogs} setMessage={setMessage} setCreateVisible={setCreateVisible} />}
     {
       blogs.map(blog =>
         <Blog key={blog.id} blog={blog} />
