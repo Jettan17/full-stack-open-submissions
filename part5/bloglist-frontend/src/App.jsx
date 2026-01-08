@@ -22,7 +22,7 @@ const StatusMessage = ({ message }) => {
     padding: '10px',
     margin: '10px 0',
     color: message.success ? 'green' : 'red',
-    visibility: visible ? 'visible' : 'hidden'
+    display: visible ? 'block' : 'none'
   }
 
   return (
@@ -39,6 +39,7 @@ const App = () => {
   const [user, setUser] = useState(null)
   const [newBlog, setNewBlog] = useState({title: '', author: '', url: ''})
   const [message, setMessage] = useState({success: true, text: 'Load successful'})
+  const [createVisible, setCreateVisible] = useState(false)
 
   useEffect(() => {
     const fetchBlogs = async () => {
@@ -126,6 +127,47 @@ const App = () => {
     setBlogs([...blogs, addedBlog])
     setNewBlog({title: '', author: '', url: ''})
     setMessage({ success: true, text: `${addedBlog.title} added successfully` })
+    setCreateVisible(false)
+  }
+
+  const createNewBlogForm = () => {
+    return (
+      <form onSubmit={handleCreateBlog}>
+        <h2>create new</h2>
+        <div>
+          <label>
+            title:
+            <input
+              type="text"
+              value={newBlog.title}
+              onChange={({ target }) => setNewBlog({ ...newBlog, title: target.value })}
+            />
+          </label>
+        </div>
+        <div>
+          <label>
+            author:
+            <input
+              type="text"
+              value={newBlog.author}
+              onChange={({ target }) => setNewBlog({ ...newBlog, author: target.value })}
+            />
+          </label>
+        </div>
+        <div>
+          <label>
+            url:
+            <input
+              type="url"
+              value={newBlog.url}
+              onChange={({ target }) => setNewBlog({ ...newBlog, url: target.value })}
+            />
+          </label>
+        </div>
+        <button type="submit">create</button>
+        <button onClick={() => setCreateVisible(false)}>cancel</button>
+      </form>
+    )
   }
 
   const blogsDisplay = () => {
@@ -134,40 +176,10 @@ const App = () => {
     <h2>blogs</h2>
     <p>{user.name} logged in</p>
     <button onClick={handleLogOut}>log out</button>
-    <form onSubmit={handleCreateBlog}>
-      <h2>create new</h2>
-      <div>
-        <label>
-          title:
-          <input
-            type="text"
-            value={newBlog.title}
-            onChange={({ target }) => setNewBlog({...newBlog, title: target.value})} 
-          />
-        </label>
-      </div>
-      <div>
-        <label>
-          author:
-          <input
-            type="text"
-            value={newBlog.author}
-            onChange={({ target }) => setNewBlog({...newBlog, author: target.value})}
-          />
-        </label>
-      </div>
-      <div>
-        <label>
-          url:
-          <input
-            type="url"
-            value={newBlog.url}
-            onChange={({ target }) => setNewBlog({...newBlog, url: target.value})}
-          />
-        </label>
-      </div>
-      <button type="submit">create</button>
-    </form>
+    {!createVisible && (
+  <button onClick={() => setCreateVisible(true)}>create new blog</button>
+)}
+{createVisible && createNewBlogForm()}
     {
       blogs.map(blog =>
         <Blog key={blog.id} blog={blog} />
