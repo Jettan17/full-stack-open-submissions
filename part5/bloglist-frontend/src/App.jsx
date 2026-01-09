@@ -33,7 +33,7 @@ const StatusMessage = ({ message }) => {
 }
 
 const NewBlogForm = ({ blogs, setBlogs, setMessage, setCreateVisible }) => {
-  const [newBlog, setNewBlog] = useState({ title: '', author: '', url: '' })
+  const [newBlog, setNewBlog] = useState({ title: '', author: '', url: '', likes: 0 })
 
   const handleCreateBlog = async event => {
     event.preventDefault()
@@ -43,7 +43,7 @@ const NewBlogForm = ({ blogs, setBlogs, setMessage, setCreateVisible }) => {
     })
 
     setBlogs([...blogs, addedBlog])
-    setNewBlog({ title: '', author: '', url: '' })
+    setNewBlog({ title: '', author: '', url: '', likes: 0 })
     setMessage({ success: true, text: `${addedBlog.title} added successfully` })
     setCreateVisible(false)
   }
