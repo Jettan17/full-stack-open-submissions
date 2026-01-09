@@ -1,5 +1,6 @@
 /* eslint-disable no-undef */
 import { render, screen } from '@testing-library/react'
+import userEvent from '@testing-library/user-event'
 import Blog from '../src/components/Blog'
 
 test('renders content', () => {
@@ -21,4 +22,33 @@ test('renders content', () => {
   expect(blogAuthor).toBeDefined()
   expect(blogUrl).toBeNull()
   expect(blogLikes).toBeNull()
+})
+
+test('checks blog info shown when button clicked', async () => {
+  const blogUser = {
+    id: '4018',
+    username: 'nia',
+    name: 'nia'
+  }
+
+  const blog = {
+    title: 'Component testing is done with react-testing-library',
+    author: 'John Doe',
+    url: 'http://camo.com',
+    likes: 0,
+    user: blogUser
+  }
+
+  render(<Blog blog={blog} user={blogUser} />)
+
+  const user = userEvent.setup()
+
+  const button = screen.getByText('view')
+  await user.click(button)
+
+  const blogUrl = screen.getByText('http://camo.com', { exact: false })
+  const blogLikes = screen.getByText('likes 0', { exact: false })
+
+  expect(blogUrl).toBeDefined()
+  expect(blogLikes).toBeDefined()
 })
