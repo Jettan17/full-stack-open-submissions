@@ -1,4 +1,4 @@
-import { useState } from "react"
+import { useState } from 'react'
 import blogService from '../services/blogs'
 
 const Blog = ({ blog, user, blogs, setBlogs }) => {
@@ -28,7 +28,7 @@ const Blog = ({ blog, user, blogs, setBlogs }) => {
     event.preventDefault()
 
     const deleteConfirm = window.confirm(`Remove blog ${blog.title} by ${blog.author}`)
-    
+
     if (deleteConfirm) {
       await blogService.deleteBlog(blog)
 
@@ -45,13 +45,13 @@ const Blog = ({ blog, user, blogs, setBlogs }) => {
   const blogInfo = () => {
     return (
       <>
-      <div>{blog.url}</div>
-      <div>
-        <div>likes {blog.likes}</div>
-        <button onClick={handleLike}>like</button>
-      </div>
-      <div>{blog.user.name}</div>
-      {blog.user.name === user.name && blogDelete()}
+        <div>{blog.url}</div>
+        <div>
+          <div>likes {blog.likes}</div>
+          <button onClick={handleLike}>like</button>
+        </div>
+        <div>{blog.user.name}</div>
+        {blog.user.name === user.name && blogDelete()}
       </>
     )
   }
@@ -63,7 +63,7 @@ const Blog = ({ blog, user, blogs, setBlogs }) => {
         <button onClick={() => setBlogInfoVisible(!blogInfoVisible)}>{blogInfoVisible ? 'hide' : 'view'}</button>
       </div>
       {blogInfoVisible && blogInfo()}
-    </div>  
+    </div>
   )
 }
 

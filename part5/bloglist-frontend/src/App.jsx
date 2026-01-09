@@ -90,15 +90,15 @@ const NewBlogForm = ({ blogs, setBlogs, setMessage, setCreateVisible }) => {
 const App = () => {
   const [blogs, setBlogs] = useState([])
   const [username, setUsername] = useState('')
-  const [password, setPassword] = useState('') 
+  const [password, setPassword] = useState('')
   const [user, setUser] = useState(null)
-  const [message, setMessage] = useState({success: true, text: 'Load successful'})
+  const [message, setMessage] = useState({ success: true, text: 'Load successful' })
   const [createVisible, setCreateVisible] = useState(false)
 
   useEffect(() => {
     const fetchBlogs = async () => {
       const blogs = await blogService.getAll()
-      
+
       //sort blogs by likes
       setBlogs(blogs.sort((a, b) => b.likes - a.likes))
 
@@ -126,12 +126,12 @@ const App = () => {
 
       window.localStorage.setItem(
         'loggedBlogAppUser', JSON.stringify(user)
-      ) 
+      )
 
       setUser(user)
       setUsername('')
       setPassword('')
-      setMessage({success: true, text: 'Login successful'})
+      setMessage({ success: true, text: 'Login successful' })
     } catch {
       setMessage({ success: false, text: 'Wrong username or password' })
     }
@@ -146,51 +146,51 @@ const App = () => {
 
   const loginForm = () => {
     return (
-    <>
-    <h2>Login</h2>
-      <form onSubmit={handleLogin}>
-        <div>
-          <label>
-            username
-            <input
-              type="text"
-              value={username}
-              onChange={({ target }) => setUsername(target.value)}
-            />
-          </label>
-        </div>
-        <div>
-          <label>
-            password
-            <input
-              type="password"
-              value={password}
-              onChange={({ target }) => setPassword(target.value)}
-            />
-          </label>
-        </div>
-        <button type="submit">login</button>
-      </form>
-    </>
+      <>
+        <h2>Login</h2>
+        <form onSubmit={handleLogin}>
+          <div>
+            <label>
+              username
+              <input
+                type="text"
+                value={username}
+                onChange={({ target }) => setUsername(target.value)}
+              />
+            </label>
+          </div>
+          <div>
+            <label>
+              password
+              <input
+                type="password"
+                value={password}
+                onChange={({ target }) => setPassword(target.value)}
+              />
+            </label>
+          </div>
+          <button type="submit">login</button>
+        </form>
+      </>
     )
   }
 
   const blogsDisplay = () => {
     return (
-    <>
-    <h2>blogs</h2>
-    <p>{user.name} logged in</p>
-    <button onClick={handleLogOut}>log out</button>
-    {!createVisible && (
-  <button onClick={() => setCreateVisible(true)}>create new blog</button>
-)}
-    {createVisible && <NewBlogForm blogs={blogs} setBlogs={setBlogs} setMessage={setMessage} setCreateVisible={setCreateVisible} />}
-    {
-      blogs.map(blog =>
-        <Blog key={blog.id} blog={blog} user={user} blogs={blogs} setBlogs={setBlogs} />
-      )
-    }
-    </>
+      <>
+        <h2>blogs</h2>
+        <p>{user.name} logged in</p>
+        <button onClick={handleLogOut}>log out</button>
+        {!createVisible && (
+          <button onClick={() => setCreateVisible(true)}>create new blog</button>
+        )}
+        {createVisible && <NewBlogForm blogs={blogs} setBlogs={setBlogs} setMessage={setMessage} setCreateVisible={setCreateVisible} />}
+        {
+          blogs.map(blog =>
+            <Blog key={blog.id} blog={blog} user={user} blogs={blogs} setBlogs={setBlogs} />
+          )
+        }
+      </>
     )
   }
 
