@@ -26,4 +26,8 @@ const put = async updatedObject => {
   return response.data
 }
 
-export default { getAll, create, setToken, put }
+const deleteBlog = async deleteObject => {
+  await axios.delete(`${baseUrl}/${deleteObject.id}`)
+}
+
+export default { getAll, create, setToken, put, deleteBlog }

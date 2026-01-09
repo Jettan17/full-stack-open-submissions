@@ -175,18 +175,6 @@ const App = () => {
     )
   }
 
-  const handleLike = async (event, blog) => {
-    event.preventDefault()
-
-    const updatedBlog = await blogService.put({
-      ...blog,
-      likes: blog.likes + 1
-    })
-
-    setBlogs(blogs.map(b => b.id === updatedBlog.id ? { ...updatedBlog, user: b.user } : b)
-    .sort((a, b) => b.likes - a.likes))
-  }
-
   const blogsDisplay = () => {
     return (
     <>
@@ -199,7 +187,7 @@ const App = () => {
     {createVisible && <NewBlogForm blogs={blogs} setBlogs={setBlogs} setMessage={setMessage} setCreateVisible={setCreateVisible} />}
     {
       blogs.map(blog =>
-        <Blog key={blog.id} blog={blog} handleLike={handleLike} />
+        <Blog key={blog.id} blog={blog} user={user} blogs={blogs} setBlogs={setBlogs} />
       )
     }
     </>
