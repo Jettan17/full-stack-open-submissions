@@ -179,7 +179,7 @@ const App = () => {
       likes: blog.likes + 1
     })
 
-    setBlogs(blogs.map(b => b.id === updatedBlog.id ? updatedBlog : b))
+    setBlogs(blogs.map(b => b.id === updatedBlog.id ? { ...updatedBlog, user: b.user } : b))
   }
 
   const blogsDisplay = () => {
