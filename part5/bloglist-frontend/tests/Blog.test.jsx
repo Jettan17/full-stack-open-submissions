@@ -52,3 +52,34 @@ test('checks blog info shown when button clicked', async () => {
   expect(blogUrl).toBeDefined()
   expect(blogLikes).toBeDefined()
 })
+
+test('like button clicked twice', async () => {
+  const blogUser = {
+    id: '4018',
+    username: 'nia',
+    name: 'nia'
+  }
+
+  const mockHandler = vi.fn()
+
+  const blog = {
+    title: 'Component testing is done with react-testing-library',
+    author: 'John Doe',
+    url: 'http://camo.com',
+    likes: 0,
+    user: blogUser
+  }
+
+  render(<Blog blog={blog} user={blogUser} handleBlogLike={mockHandler}/>)
+
+  const user = userEvent.setup()
+
+  const viewButton = screen.getByText('view')
+  await user.click(viewButton)
+
+  const likeButton = screen.getByText('like')
+  await user.click(likeButton)
+  await user.click(likeButton)
+
+  expect(mockHandler).toHaveBeenCalledTimes(2)
+})
