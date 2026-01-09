@@ -2,6 +2,7 @@
 import { render, screen } from '@testing-library/react'
 import userEvent from '@testing-library/user-event'
 import Blog from '../src/components/Blog'
+import NewBlogForm from '../src/components/NewBlogForm'
 
 test('renders content', () => {
   const blog = {
@@ -82,4 +83,28 @@ test('like button clicked twice', async () => {
   await user.click(likeButton)
 
   expect(mockHandler).toHaveBeenCalledTimes(2)
+})
+
+test('create new blog with form', async () => {
+  const mockHandler = vi.fn()
+  const user = userEvent.setup()
+
+  render(<NewBlogForm handleCreateBlog={mockHandler}/>)
+
+  const inputs = screen.getAllByRole('textbox')
+  const createButton = screen.getByText('create')
+
+  await user.type(inputs[0], 'testing a form...')
+  await user.type(inputs[1], 'mr. noa')
+  await user.type(inputs[2], 'http://omdam.com')
+
+  await user.click(createButton)
+
+  expect(mockHandler.mock.calls).toHaveLength(1)
+  expect(mockHandler).toHaveBeenCalledWith({
+    title: 'testing a form...',
+    author: 'mr. noa',
+    url: 'http://omdam.com',
+    likes: 0
+  })
 })
